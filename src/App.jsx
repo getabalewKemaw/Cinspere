@@ -7,7 +7,7 @@ import NavBar from './components/NavBar';
 import Favorites from './pages/Favorites';
 import Home from './pages/Home';
 
-import Login from './components/login';
+import Login from './components/Login';
 import { AuthProvider } from './context/AuthContext';// New import
 import { Routes, Route } from 'react-router-dom';
 
