@@ -4,8 +4,12 @@ import Search from './components/Search';
 import Spinner from './components/Spinner';
 import MovieCard from './components/MovieCard';
 import NavBar from './components/NavBar';
+import Favorites from './pages/Favorites';
+import Home from './pages/Home';
+
 import Login from './components/login';
 import { AuthProvider } from './context/AuthContext';// New import
+import { Routes, Route } from 'react-router-dom';
 
 
 
@@ -162,6 +166,12 @@ const App = () => {
         <header>
        <NavBar onLoginClick={() => setIsLoggedInOpen(true)} />
          
+            <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/favorites" element={<Favorites />} />
+      </Routes>
+
           <img src="./hero.png" alt="hero banner" />
           <h1>
             Find <span className="text-gradient">Movies</span> you enjoy without
@@ -198,13 +208,7 @@ const App = () => {
           </section>
         )}
 
-
-
-
-
-
-
-        <section className="all-movies">
+   <section className="all-movies">
           <h2>{searchTerm ? 'Search Results' : 'All Movies'}</h2>
           {isLoading ? (
             <Spinner isFullScreen={true} />
@@ -292,3 +296,7 @@ const App = () => {
 };
 
 export default App;
+
+
+// i need a sign up page 
+//

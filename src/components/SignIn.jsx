@@ -1,51 +1,59 @@
-import React, { useState } from 'react';
-import { AuthProvider } from '../context/AuthContext';
-import axios from 'axios';
-import { Icon } from '@iconify/react';
-
-const SignIn = ({onClose,login}) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!email || !password) {
-    setError('Please fill in all fields');
-    return;
-  }
-  setError('');
-
-  try {
-  const response = await axios.post(
-    'http://localhost:5000/api/user/login',
-    { email, password },
-    { withCredentials: true } // needed for cookies if backend sets httpOnly token
-  );
-
-  console.log('📩 Backend response:', response.data);
-
-  // Save token to localStorage (optional)
-  localStorage.setItem('token', response.data.token);
-
-const userData = response.data.user || { name: email.split('@')[0], email };
-      login(userData, response.data.token); // Call context login
-
-      onClose(); // "Redirect" by closing modal
-      setEmail('');
-      setPassword('');
-} catch (err) {
-  console.error('❌ Login error:', err);
-  setError(err.response?.data?.msg || 'Login failed, check credentials');
-}
+import React, { useState } from "react";
+import { Icon } from "@iconify/react";
+import { useAuth } from "../context/auth";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+axios.defaults.withCredentials = true; // Enable sending cookies with requests
 
 
-};
+const SignIn = ({ onClose = () => {}, redirectPath = "/" }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      setError("Please fill in all fields");
+      return;
+    }
+    setError("");
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/user/login",
+        { email, password },
+        { withCredentials: true }
+      );
+
+      console.log("📩 Backend response:", response.data);
+
+      localStorage.setItem("token", response.data.token);
+
+      const userData = response.data.user || {
+        name: email.split("@")[0],
+        email,
+      };
+      login(userData, response.data.token);
+
+      onClose(); // close modal
+      navigate(redirectPath); // redirect to intended page
+
+      setEmail("");
+      setPassword("");
+    } catch (err) {
+      console.error("❌ Login error:", err);
+      setError(err.response?.data?.msg || "Login failed, check credentials");
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-      {error && <p className="text-red-500 text-center text-xs sm:text-sm">{error}</p>}
+      {error && (
+        <p className="text-red-500 text-center text-xs sm:text-sm">{error}</p>
+      )}
       <div className="relative">
         <Icon
           icon="mdi:email-outline"
