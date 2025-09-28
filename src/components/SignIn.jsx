@@ -3,6 +3,7 @@ import { Icon } from "@iconify/react";
 import { useAuth } from "../context/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { loginUser } from "../api";
 axios.defaults.withCredentials = true; // Enable sending cookies with requests
 
 
@@ -13,41 +14,34 @@ const SignIn = ({ onClose = () => {}, redirectPath = "/" }) => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email || !password) {
-      setError("Please fill in all fields");
-      return;
-    }
-    setError("");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!email || !password) {
+    setError("Please fill in all fields");
+    return;
+  }
+  setError("");
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/user/login",
-        { email, password },
-        { withCredentials: true }
-      );
+  try {
+    const response = await loginUser({ email, password });
 
-      console.log("📩 Backend response:", response.data);
+    console.log("📩 Backend response:", response.data);
 
-      localStorage.setItem("token", response.data.token);
+    localStorage.setItem("token", response.data.token);
 
-      const userData = response.data.user || {
-        name: email.split("@")[0],
-        email,
-      };
-      login(userData, response.data.token);
+    const userData = response.data.user || { name: email.split("@")[0], email };
+    login(userData, response.data.token);
 
-      onClose(); // close modal
-      navigate(redirectPath); // redirect to intended page
+    onClose();
+    navigate(redirectPath);
 
-      setEmail("");
-      setPassword("");
-    } catch (err) {
-      console.error("❌ Login error:", err);
-      setError(err.response?.data?.msg || "Login failed, check credentials");
-    }
-  };
+    setEmail("");
+    setPassword("");
+  } catch (err) {
+    console.error("❌ Login error:", err);
+    setError(err.response?.data?.msg || "Login failed, check credentials");
+  }
+};
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">

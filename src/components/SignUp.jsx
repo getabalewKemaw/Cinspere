@@ -1,59 +1,46 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import axios from 'axios';
+import { signupUser } from "../api";
 import { useAuth } from '../context/auth';// New import
+axios.defaults.withCredentials = true; // Enable sending cookies with requests
 const SignUp = ({ onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
 const { login } = useAuth(); // Use context
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email || !password || !confirmPassword) {
-      setError('Please fill in all fields');
-      return;
-    }
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError('Invalid email format');
-      return;
-    }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-    setError('');
-   try {
-  const response = await axios.post(
-    'http://localhost:5000/api/user/signup', // your backend endpoint
-    { name: email.split('@')[0], email, password }, // optional: derive name from email
-    { withCredentials: true } // needed if your backend sets cookies
-  );
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!email || !password || !confirmPassword) {
+    setError("Please fill in all fields");
+    return;
+  }
+  if (password !== confirmPassword) {
+    setError("Passwords do not match");
+    return;
+  }
+  setError("");
 
-  console.log('📩 Backend response:', response.data);
+  try {
+    const response = await signupUser({ name: email.split("@")[0], email, password });
 
-  // Save token to localStorage (optional)
-  localStorage.setItem('token', response.data.token);
+    console.log("📩 Backend response:", response.data);
+    localStorage.setItem("token", response.data.token);
 
-const userData = response.data.user || { name: email.split('@')[0], email };
-      login(userData, response.data.token); // Call context login
+    const userData = response.data.user || { name: email.split("@")[0], email };
+    login(userData, response.data.token);
 
-      onClose(); // "Redirect" by closing modal
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-} catch (err) {
-  console.error('❌ Signup error:', err);
-  setError(err.response?.data?.msg || 'Something went wrong');
-}
+    onClose();
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+  } catch (err) {
+    console.error("❌ Signup error:", err);
+    setError(err.response?.data?.msg || "Something went wrong");
+  }
+};
 
-  
-  
-  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
