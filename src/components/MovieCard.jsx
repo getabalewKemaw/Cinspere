@@ -16,7 +16,7 @@ const MovieCard = ({
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const res = await axios.get("http://localhost:5000/api/favorites", {
+        const res = await axios.get("https://cinspherebackend-2.onrender.com/api/favorites", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -41,14 +41,14 @@ const MovieCard = ({
 
     try {
       if (isFavorite) {
-        await axios.delete("http://localhost:5000/api/favorites/remove", {
+        await axios.delete("https://cinspherebackend-2.onrender.com/api/favorites/remove", {
           headers: { Authorization: `Bearer ${token}` },
           data: { movieId: id.toString() },
         });
         setIsFavorite(false);
       } else {
         await axios.post(
-          "http://localhost:5000/api/favorites/add",
+          "https://cinspherebackend-2.onrender.com/api/favorites/add",
           {
             movieId: id.toString(),
             title,

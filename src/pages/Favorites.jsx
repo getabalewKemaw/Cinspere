@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Icon } from "@iconify/react";
 
+
 const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
 
@@ -13,7 +14,7 @@ const Favorites = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const res = await axios.get("http://localhost:5000/api/favorites", {
+        const res = await axios.get("https://cinspherebackend-2.onrender.com/api/favorites", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFavorites(res.data);
@@ -37,7 +38,7 @@ const Favorites = () => {
       const isFav = favorites.some((fav) => fav.movieId === movie.movieId);
 
       if (isFav) {
-        await axios.delete("http://localhost:5000/api/favorites/remove", {
+        await axios.delete("https://cinspherebackend-2.onrender.com/api/favorites/remove", {
           headers: { Authorization: `Bearer ${token}` },
           data: { movieId: movie.movieId },
         });
@@ -46,7 +47,7 @@ const Favorites = () => {
         );
       } else {
         await axios.post(
-          "http://localhost:5000/api/favorites/add",
+          "https://cinspherebackend-2.onrender.com/api/favorites/add",
           movie,
           { headers: { Authorization: `Bearer ${token}` } }
         );
