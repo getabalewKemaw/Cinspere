@@ -6,7 +6,6 @@ import axios from "axios";
 import { loginUser } from "../api";
 axios.defaults.withCredentials = true; // Enable sending cookies with requests
 
-
 const SignIn = ({ onClose = () => {}, redirectPath = "/" }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

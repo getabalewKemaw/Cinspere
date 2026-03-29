@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AuthContext } from './auth'; // Import from auth.js
 
-
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null); // { name, email } or null

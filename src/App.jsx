@@ -297,6 +297,3 @@ const App = () => {
 
 export default App;
 
-
-// i need a sign up page 
-//
